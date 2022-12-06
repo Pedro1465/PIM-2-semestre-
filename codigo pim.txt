@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <ctype.h>
+#include <locale.h>
+#define QUANTIDADE 110
+
+typedef struct controle{
+        char nome[50];
+        char fone[17];
+        char email[80];
+        char endereco[80];
+        char cidade[90];
+        char estado[80];
+        char cpf[80];
+}funcionarios;
+
+void Cadastrar(void);
+void Exibir(void);
+void Pesquisar(void);
+char Adicionar();
+void Excluir(void);
+void Excluir2 (void);
+
+static int qtd = 0;
+funcionarios max[QUANTIDADE];
+FILE *arq;
+
+void Cadastrar(void){
+     int cont = 0;
+     int retorno;
+     char op = 's';
+
+     arq = fopen("funcionarios.txt", "a");
+     if (arq == NULL){
+        printf ("Erro!\nO arquivo da lista não pode ser aberto!\n");
+        getch();
+        exit(1);
+     }
+     while ((cont < QUANTIDADE) && (op == 's')){
+           printf (" Digite o nome do funcionário: ");
+           gets(max[cont].nome);
+           printf (" digite o CPF do funcionário: ");
+           gets(max[cont].cpf);
+           printf (" Digite um telefone: ");
+           gets(max[cont].fone);
+           printf (" Digite o E-mail: ");
+           gets(max[cont].email);
+           printf (" Digite o Endereço: ");
+           gets(max[cont].endereco);
+           printf (" Digite a cidade: ");
+           gets(max[cont].cidade);
+           printf (" Digite o estado: ");
+           gets(max[cont].estado);
+
+           retorno = fwrite (&max[cont], sizeof(funcionarios) ,1,arq);
+
+           if (retorno == 1) {
+               printf("\n Dados Salvos com sucesso!\n ");
+           }
+           cont++;
+           op = Adicionar();
+           qtd++;
+     }
+     fclose (arq);
+}
+
+char Adicionar(){
+   char op;
+   do {
+      printf("\n Deseja inserir novos dados? [S ou N]? " );
+      op = getch();
+      printf("\n" );
+   } while (op != 's' && op != 'n');
+   return op;
+}
+
+ void Excluir() {
+    char op;
+    do {
+      printf("\n Deseja realmente excluir tudo? Os dados não poderão ser restaurados [S ou N]" );
+      op = getch();
+      printf("\n" );
+   } while (op != 's' && op != 'n');
+   if(op != 's')
+    {
+return op;
+}
+else
+ {
+     printf("\n\tLista limpa!\n ");
+}
+    arq = fopen("funcionarios.txt","w+");
+    fclose(arq);
+    getch();
+    return op;
+}
+
+void Pesquisar(void){
+     int i=0, retorno=1, cont=0;
+     char nome[50],op;
+
+     arq = fopen("funcionarios.txt", "r");
+     if (arq == NULL){
+         printf (" Erro!\nO arquivo da lista não pode ser aberto! \n");
+         getch();
+         exit(1);
+     }
+     printf (" Digite o nome: ");
+     gets(nome);
+     retorno = fread(&max[i], sizeof(funcionarios), 1, arq);
+     while (retorno == 1){
+         if (strcmp(nome, max[i].nome) == 0 ){
+            printf("\n ------------------------------------------");
+            printf("\n Nome......: %s",max[i].nome);
+            printf("\n CPF.......: %s",max[i].cpf);
+            printf("\n Fone......: %s",max[i].fone);
+            printf("\n E-mail....: %s",max[i].email);
+            printf("\n Endereço..: %s",max[i].endereco);
+            printf("\n Cidade....: %s",max[i].cidade);
+            printf("\n Estado....: %s",max[i].estado);
+            printf("\n ------------------------------------------\n");
+            cont++;
+         }
+     i++;
+     retorno = fread(&max[i], sizeof(funcionarios), 1, arq);
+     }
+     if(cont == 0){
+        printf("Nao ha contatos com este nome!\n ");
+     }
+     getch();
+     fclose(arq);
+
+}
+
+void Exibir(void){
+    int i = 0, retorno;
+
+    arq = fopen("funcionarios.txt", "r");
+    if (arq == NULL){
+       printf ("Erro!\nO arquivo da lista não pode ser aberto!\n");
+       getch();
+       exit(1);
+    }
+    retorno = fread(&max[i], sizeof(funcionarios), 1, arq);
+    while (retorno == 1){
+      printf("\n ------------------------------------------");
+      printf("\n Nome......: %s",max[i].nome);
+      printf("\n CPF.......: %s",max[i].cpf);
+      printf("\n Fone......: %s",max[i].fone);
+      printf("\n E-mail....: %s",max[i].email);
+      printf("\n Endereço..: %s",max[i].endereco);
+      printf("\n Cidade....: %s",max[i].cidade);
+      printf("\n Estado....: %s",max[i].estado);
+      i++;
+
+      retorno = fread(&max[i], sizeof(funcionarios), 1, arq);
+    }
+    printf(" \n\n %d Contatos salvos!\n ", i);
+    getch();
+    fclose(arq);
+}
+
+void Sobre(void){
+    printf(" %c----------------------------------------------------------------------------%c\n",201,187);
+    printf(" | ");
+    printf("\t\t\t- CONTROLE DE FUNCIONARIOS -");
+    printf("\t\t\t |\n");
+    printf(" %c----------------------------------------------------------------------------%c\n\n",200,188);
+    printf("\tEm parceria com a OnTrack totens\n\tOferecimento de SoftTech\n");
+    printf("\tDesenvolvedores:\n\t\tYuri\n\t\tKallil\n\t\tMatheus\n\t\tLaerte\n\t\tPedro");
+    getch();
+}
+
+int main (){
+    int var;
+    system("title CONTROLE DE FUNCIONÁRIOS");
+    system("color 8F");
+    setlocale(LC_ALL, "Portuguese");
+    printf("\t%c------------------------------------------------------------------------------%c\n",201,187);
+    printf("\t | ");
+    printf("\t\t\t- CONTROLE DE FUNCIONARIOS -");
+    printf("\t\t\t\t|\n");
+    printf("\t%c------------------------------------------------------------------------------%c\n\n",200,188);
+    printf("\tSoftTech é uma micro empresa de tecnologia focada em desenvolver software\n");
+    printf("\tA mesma ainda está sendo desenvolvida e prefere focar em pequenos clientes\n");
+    printf("\tpara que a mesma cresça junto com eles. A SoftTech prefere abranger todo\n");
+    printf("\tSão Paulo em busca de novos clientes para desenvolver um programa leve e\n");
+    printf("\tconfavel.\n\t");
+    var=getch();
+    if(var == 32){ exit(0);}
+menu();
+system("pause");
+}
+
+void menu(void){
+    char op;
+    do{
+        system("cls");
+        printf(" %c------------------------------------------------------------------------------%c\n",201,187);
+        printf(" | ");
+        printf("\t\t\t- CONTROLE DE FUNCIONARIOS -");
+        printf("\t\t\t\t|\n");
+        printf(" %c------------------------------------------------------------------------------%c\n\n",200,188);
+        printf("\n 1 = Cadastrar Funcionário\n 2 = Exibir Lista\n 3 = Pesquisar por nome\n 4 = Formatar lista\n 5 = Sobre\n 6 = Voltar\n\n");
+
+        op = getch();
+        switch(op){
+            case '1':
+                Cadastrar();
+                break;
+            case '2':
+                Exibir();
+                break;
+            case '3':
+                Pesquisar();
+                break;
+            case '4':
+                Excluir();
+                break;
+            case '5':
+                system("cls");
+                Sobre();
+                break;
+            case '6':
+                system("cls");
+                main();
+                break;
+            default:
+                printf("\a Digite uma opção valida\n");
+                getch();
+        }
+    }
+    while (op);
+}
